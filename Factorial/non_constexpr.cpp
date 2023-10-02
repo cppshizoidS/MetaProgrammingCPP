@@ -1,8 +1,8 @@
 #include <iostream>
 
 // template meta recursive function
-template <unsigned int N> struct _Factorial {
-  enum { value = N * _Factorial<N - 1>::value };
+template <unsigned int n> struct _Factorial {
+  enum { value = n * _Factorial<n - 1>::value };
 };
 
 // base
