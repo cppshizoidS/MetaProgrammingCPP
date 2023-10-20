@@ -212,3 +212,230 @@ struct common_type<matrix<T1>, T2> {
   using type = matrix<std::common_type_t<T1, T2>>;
 };
 } 
+
+namespace shizmatrix {
+
+template <typename T>
+struct storage_type<scalar_expression<T>> {
+  using type = scalar_expression<T>;
+};
+
+template <typename Op, typename E1, typename E2>
+class cwise_matrix_binary_operation : public expression<cwise_matrix_binary_operation<Op, E1, E2>> {
+private:
+
+  E1 const &expr1;
+
+  storage_type_t<E2> expr2;
+
+public:
+
+  using EvalReturnType = std::common_type_t<eval_return_type_t<E1>, eval_return_type_t<E2>>;
+
+  using ElementType = std::common_type_t<element_type_t<E1>, element_type_t<E2>>;
+
+  inline cwise_matrix_binary_operation(expression<E1> const &expr1, expression<E2> const &expr2)
+      : expr1(expr1.get_const_derived()), expr2(expr2.get_const_derived()) {}
+
+  inline ElementType operator()(std::size_t i, std::size_t j) const {
+    return Op::apply(expr1, expr2, i, j);
+  }
+
+  inline const EvalReturnType eval() const {
+    EvalReturnType temp(num_rows(), num_cols());
+    temp.assign((*this));
+    return temp;
+  }
+
+  inline std::size_t num_rows() const {
+    return expr1.num_rows();
+  }
+
+  inline std::size_t num_cols() const {
+    return expr1.num_cols();
+  }
+};
+
+template <template <typename E1, typename E2> typename Op, typename E1, typename E2>
+cwise_matrix_binary_operation<Op<E1, E2>, E1, E2>
+make_cwise_matrix_binary_operation(expression<E1> const &expr1, expression<E2> const &expr2) {
+  return cwise_matrix_binary_operation<Op<E1, E2>, E1, E2>(expr1, expr2);
+}
+
+template <typename E1, typename E2>
+class matrix_product : public expression<matrix_product<E1, E2>> {
+public:
+
+  using EvalReturnType = std::common_type_t<eval_return_type_t<E1>, eval_return_type_t<E2>>;
+
+  using ElementType = std::common_type_t<element_type_t<E1>, element_type_t<E2>>;
+
+private:
+
+  E1 const &expr1;
+
+  E2 const &expr2;
+
+  EvalReturnType temp;
+
+public:
+
+  inline matrix_product(expression<E1> const &expr1, expression<E2> const &expr2)
+      : expr1(expr1.get_const_derived()), expr2(expr2.get_const_derived()),
+        temp(expr1.num_rows(), expr2.num_cols()) {
+    for (std::size_t i = 0; i < num_rows(); ++i) {
+      for (std::size_t j = 0; j < num_cols(); ++j) {
+        temp.set_elt(i, j, expr1.get_const_derived()(i, 0) * expr2.get_const_derived()(0, j));
+        for (std::size_t k = 1; k < expr1.num_cols(); ++k) {
+          temp.set_elt(
+              i, j, expr1.get_const_derived()(i, k) * expr2.get_const_derived()(k, j) + temp(i, j));
+        }
+      }
+    }
+  }
+
+  inline ElementType operator()(std::size_t i, std::size_t j) const {
+    return temp(i, j);
+  }
+
+  inline EvalReturnType const &eval() const {
+    return temp;
+  }
+
+  inline std::size_t num_rows() const {
+    return expr1.num_rows();
+  }
+
+  inline std::size_t num_cols() const {
+    return expr2.num_cols();
+  }
+};
+
+template <typename E1, typename E2>
+struct cwise_matrix_add {
+
+  inline static typename std::common_type_t<element_type_t<E1>, element_type_t<E2>>
+  apply(expression<E1> const &expr1, expression<E2> const &expr2, std::size_t i, std::size_t j) {
+    return expr1.get_const_derived()(i, j) + expr2.get_const_derived()(i, j);
+  }
+};
+
+template <typename E1, typename E2>
+struct cwise_matrix_multiply {
+
+  inline static typename std::common_type_t<element_type_t<E1>, element_type_t<E2>>
+  apply(expression<E1> const &expr1, expression<E2> const &expr2, std::size_t i, std::size_t j) {
+    return expr1.get_const_derived()(i, j) * expr2.get_const_derived()(i, j);
+  }
+};
+
+template <typename E1, typename E2>
+struct cwise_matrix_subtract {
+
+  inline static typename std::common_type_t<element_type_t<E1>, element_type_t<E2>>
+  apply(expression<E1> const &expr1, expression<E2> const &expr2, std::size_t i, std::size_t j) {
+    return expr1.get_const_derived()(i, j) - expr2.get_const_derived()(i, j);
+  }
+};
+
+template <typename E1, typename E2>
+inline auto operator+(expression<E1> const &expr1, expression<E2> const &expr2) {
+  assert(expr1.num_rows() == expr2.num_rows());
+  assert(expr1.num_cols() == expr2.num_cols());
+  return make_cwise_matrix_binary_operation<cwise_matrix_add>(expr1, expr2);
+}
+
+template <typename E, typename T, typename = enable_if_not_expression<T>>
+inline auto operator+(expression<E> const &expr, T const &scalar) {
+  return make_cwise_matrix_binary_operation<cwise_matrix_add>(expr, scalar_expression(scalar));
+}
+
+template <typename E, typename T, typename = enable_if_not_expression<T>>
+inline auto operator+(T const &scalar, expression<E> const &expr) {
+  return expr + scalar;
+}
+
+template <typename E1, typename E2>
+inline auto operator*(expression<E1> const &expr1, expression<E2> const &expr2) {
+  assert(expr1.num_cols() == expr2.num_rows());
+  return matrix_product(expr1, expr2);
+}
+
+template <typename E, typename T, typename = enable_if_not_expression<T>>
+inline auto operator*(expression<E> const &expr, T const &scalar) {
+  return make_cwise_matrix_binary_operation<cwise_matrix_multiply>(expr, scalar_expression(scalar));
+}
+
+template <typename E, typename T, typename = enable_if_not_expression<T>>
+inline auto operator*(T const &scalar, expression<E> const &expr) {
+  return expr * scalar;
+}
+
+template <typename E1, typename E2>
+inline auto operator-(expression<E1> const &expr1, expression<E2> const &expr2) {
+  assert(expr1.num_rows() == expr2.num_rows());
+  assert(expr1.num_cols() == expr2.num_cols());
+  return make_cwise_matrix_binary_operation<cwise_matrix_subtract>(expr1, expr2);
+}
+
+template <typename E, typename T, typename = enable_if_not_expression<T>>
+inline auto operator-(expression<E> const &expr, T const &scalar) {
+  return make_cwise_matrix_binary_operation<cwise_matrix_subtract>(expr, scalar_expression(scalar));
+}
+
+template <typename E, typename T, typename = enable_if_not_expression<T>>
+inline auto operator-(T const &scalar, expression<E> const &expr) {
+  return expr - scalar;
+}
+
+template <typename T>
+template <typename E>
+inline matrix<T> &matrix<T>::operator+=(expression<E> const &expr) {
+  assert(n_rows == expr.num_rows());
+  assert(n_cols == expr.num_cols());
+  assign(make_cwise_matrix_binary_operation<cwise_matrix_add>(*this, expr));
+  return *this;
+}
+
+template <typename T>
+template <typename Scalar, typename>
+inline matrix<T> &matrix<T>::operator+=(Scalar const &scalar) {
+  assign(make_cwise_matrix_binary_operation<cwise_matrix_add>(*this, scalar_expression(scalar)));
+  return *this;
+}
+
+template <typename T>
+template <typename E>
+inline matrix<T> &matrix<T>::operator*=(expression<E> const &expr) {
+  assert(n_rows == expr.num_cols());
+  assign(matrix_product(*this, expr));
+  return *this;
+}
+
+template <typename T>
+template <typename Scalar, typename>
+inline matrix<T> &matrix<T>::operator*=(Scalar const &scalar) {
+  assign(
+      make_cwise_matrix_binary_operation<cwise_matrix_multiply>(*this, scalar_expression(scalar)));
+  return *this;
+}
+
+template <typename T>
+template <typename E>
+inline matrix<T> &matrix<T>::operator-=(expression<E> const &expr) {
+  assert(n_rows == expr.num_rows());
+  assert(n_cols == expr.num_cols());
+  assign(make_cwise_matrix_binary_operation<cwise_matrix_subtract>(*this, expr));
+  return *this;
+}
+
+template <typename T>
+template <typename Scalar, typename>
+inline matrix<T> &matrix<T>::operator-=(Scalar const &scalar) {
+  assign(
+      make_cwise_matrix_binary_operation<cwise_matrix_subtract>(*this, scalar_expression(scalar)));
+  return *this;
+}
+} 
+
+#endif 
