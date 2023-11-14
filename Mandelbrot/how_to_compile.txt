@@ -1,0 +1,1 @@
+clang++ main.cpp -std=c++2a -Wall -Wextra -fsanitaze=address,undefined -lsfml-window -lsfml-system -pthread -lsfml-graphics -O3 -ggdb -ltbb -fconstexpr-opt-limit=1000000000 -fconstexpr-loop-limit=100000000
