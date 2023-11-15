@@ -6,4 +6,4 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS)
 
 add_compile_options(-Wall -std=c++23)
 
-add_executable(chapter_05 main.cpp ${headers})
+add_executable(chapter_05 main.cpp)
