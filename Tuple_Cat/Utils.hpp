@@ -59,9 +59,9 @@ struct IndexedCopyCounter {
 
 namespace detail {
 static constexpr size_t default_copycounter_index =
-    2734987;  // just some random number so you don't easily create an
-              // IndexedCopyCounter with the same index
-}  // namespace detail
+    2734987;  
+
+}  
 using CopyCounter = IndexedCopyCounter<detail::default_copycounter_index>;
 
 template <size_t index = detail::default_copycounter_index>
@@ -70,11 +70,8 @@ IndexedCopyCounter<index> make_copy_counter() {
       IndexedCopyCounter<index>::reset_after_construct};
 }
 
-}  // namespace bits_of_q
+}  
 
-/// This namespace contains small testing framework developed for this series to
-/// keep the number of dependencies low. For any serious project, please use a
-/// well-established testing framework such as GoogleTest or Catch.
 namespace bits_of_q::testing {
 struct AssertFailed : std::runtime_error {
   explicit AssertFailed(std::string_view file_path, size_t line,
@@ -94,16 +91,13 @@ struct AssertFailed : std::runtime_error {
   }
 
 class Tester {
-  /// Unix terminal color codes
-  /// Use fmt::format's color manipulation or if your compiler already supports
-  /// it std::format for an easy cross-platform alternative.
+
   static constexpr std::string_view color_reset = "\033[0m";
   static constexpr std::string_view color_red = "\033[31m";
   static constexpr std::string_view color_green = "\033[32m";
 
  public:
-  /// Executes the function outputting a banner at the start and end as well as
-  /// printing information on exceptions thrown by the function.
+
   template <typename FUNC>
   static void test(std::string_view test_name, FUNC &&function) {
     print_test_start(test_name);
@@ -164,19 +158,7 @@ class Builder;
 template <size_t n_args>
 class TesterWithBuilder {
  public:
-  /// Executes functions with a builder for different configurations(see above)
-  /// as input. Example: if n_args == 2, the test function will execute the
-  /// input function 4*4=16 times with the following builders
-  /// func(Builder<non_const_lvalue, non_const_lvalue)
-  /// func(Builder<const_lvalue, non_const_lvalue)
-  /// func(Builder<non_const_rvalue, non_const_lvalue)
-  /// func(Builder<const_rvalue, non_const_lvalue)
-  /// func(Builder<non_const_lvalue, const_lvalue)
-  /// func(Builder<const_lvalue, const_lvalue)
-  /// func(Builder<non_const_rvalue, const_lvalue)
-  /// func(Builder<const_lvalue, const_lvalue)
-  /// func(Builder<non_const_lvalue, non_const_rvalue)
-  /// ... etc, for all 4^2 = 16 input configurations
+
   template <typename FUNC>
   static void test(std::string_view test_name, FUNC &&function) {
     auto test_func = [&]() {
