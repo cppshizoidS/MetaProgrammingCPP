@@ -19,7 +19,7 @@ int example_simple() noexcept
     // this would not compile, because because hash map doesn't contain it
     //static_assert(map["key3"] == 3);
 
-    // just as an example to observe generated assembly
+    //example to observe generated assembly
     return map.at("key2").second;
 }
 
@@ -45,7 +45,6 @@ int example_advanced() noexcept
         // do something with the elements
     }
 
-    // dummy example to observe constexpr nature of the generated assembly
     return it->second.size();
 }
 
