@@ -53,9 +53,9 @@ int main() {
     auto c1 = make_copy_counter<boq_tuple>();
     auto c2 = make_copy_counter<std_tuple>();
 
-    auto &&[boq_tuple1, boq_tuple2] =
+    [[maybe_unused]] auto &&[boq_tuple1, boq_tuple2] =
         builder.build(boq::Tuple{42, c1, true}, boq::Tuple{false, c1, 1.2});
-    auto &&[std_tuple1, std_tuple2] =
+    [[maybe_unused]] auto &&[std_tuple1, std_tuple2] =
         builder.build(std::tuple{42, c2, true}, std::tuple{false, c2, 1.2});
 
     auto boq_t1_2 =
