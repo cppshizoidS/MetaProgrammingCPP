@@ -1,4 +1,4 @@
-#include "lambda_coros.hpp"
+#include "lambda.hpp"
 #include <iostream>
 
 int main() {
@@ -7,7 +7,7 @@ int main() {
   auto lambda_range = [&state_range]() mutable { return state_range++; };
 
   auto range =
-      cppshizoid::lambda_coros::lambda_co_range(lambda_range, 0, 5, 2);
+      cppshizoid::lambda::lambda_range(lambda_range, 0, 5, 2);
 
   for (const auto &value : range) {
     std::cout << value << " ";
@@ -18,8 +18,8 @@ int main() {
   int state_while = 0;
 
   auto lambda_while = [&state_while]() mutable -> std::optional<int> {
-    cppshizoid::lambda_coros::lambda_co_status_check(
-        state_while); // Check lambda coroutine requirements
+    cppshizoid::lambda::lambda_status_check(
+        state_while); 
     if (state_while < 5) {
       return state_while++;
     } else {
@@ -28,7 +28,7 @@ int main() {
   };
 
   auto range_while =
-      cppshizoid::lambda_coros::while_has_value(lambda_while);
+      cppshizoid::lambda::while_has_value(lambda_while);
 
   for (const auto &value : range_while) {
     std::cout << value << " ";
