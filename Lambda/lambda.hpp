@@ -10,30 +10,30 @@
 
 namespace cppshizoid::lambda_coros {
 
-constexpr std::string lambda_co_concatenate_impl(const std::string &a,
+constexpr std::string lambda_concatenate_impl(const std::string &a,
                                                  const std::string &b) {
   return a + b;
 }
 
-constexpr auto lambda_co_concatenate(const std::string &a,
+constexpr auto lambda_concatenate(const std::string &a,
                                      const std::string &b) {
-  return lambda_co_concatenate_impl(a, b);
+  return lambda_concatenate_impl(a, b);
 }
 
-constexpr auto lambda_co_concatenate_line() {
-  return lambda_co_concatenate("long", "");
+constexpr auto lambda_concatenate_line() {
+  return lambda_concatenate("long", "");
 }
 template <typename ParamType>
-constexpr void lambda_co_status_check(ParamType &value) {
+constexpr void lambda_status_check(ParamType &value) {
   static_assert(std::is_integral_v<ParamType>, "integral state is required");
   static_assert(!std::is_const_v<ParamType>, "mutable lambda required");
   static_assert(sizeof(value) >= 4, "state must be at least 32 bits");
 }
 
-inline constexpr std::size_t lambda_co_constexpr_line = 0;
+inline constexpr std::size_t lambdaconstexpr_line = 0;
 
 template <typename Lambda>
-constexpr auto lambda_co_range(Lambda lambda, std::size_t skip = 0,
+constexpr auto lambda_range(Lambda lambda, std::size_t skip = 0,
                                std::optional<std::size_t> length = {},
                                std::size_t stride = 1) {
   struct Range {
@@ -151,6 +151,6 @@ template <typename Lambda> constexpr auto while_has_value(Lambda lambda) {
 
   return Range{std::move(lambda)};
 }
-} // namespace cppshizoid::lambda_coros
+} // namespace cppshizoid::lambda
 
 #endif // !LAMBDA_COROS_HPP
