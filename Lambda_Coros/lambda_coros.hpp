@@ -9,26 +9,20 @@
 
 namespace cppshizoid::lambda_coros {
 
-constexpr void lambda_co_concatenate_impl(char *dest, const char *a,
-                                          const char *b) {
-  while (*a) {
-    *dest++ = *a++;
-  }
-  while (*b) {
-    *dest++ = *b++;
-  }
-  *dest = '\0';
+constexpr std::string lambda_co_concatenate_impl(const std::string& a,
+                                                 const std::string& b) {
+    return a + b;
 }
 
-constexpr auto lambda_co_concatenate(const char *a, const char *b) {
-  char result[256]; // Adjust the size as needed
-  lambda_co_concatenate_impl(result, a, b);
-  return std::string(result);
+constexpr auto lambda_co_concatenate(const std::string& a, const std::string& b) {
+    return lambda_co_concatenate_impl(a, b);
 }
+
 
 constexpr auto lambda_co_concatenate_line() {
   return lambda_co_concatenate("long", "");
 }
+
 template <typename ParamType>
 constexpr void lambda_co_status_check(ParamType &value) {
   static_assert(std::is_integral_v<ParamType>, "integral state is required");
