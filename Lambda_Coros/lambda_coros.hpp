@@ -5,6 +5,7 @@
 #include <functional>
 #include <optional>
 #include <type_traits>
+#include <string>
 #include <utility>
 
 namespace cppshizoid::lambda_coros {
