@@ -1,5 +1,5 @@
-#ifndef LAMBDA_COROS_HPP
-#define LAMBDA_COROS_HPP
+#ifndef LAMBDA_HPP
+#define LAMBDA_HPP
 
 #include <cstddef>
 #include <functional>
@@ -153,4 +153,4 @@ template <typename Lambda> constexpr auto while_has_value(Lambda lambda) {
 }
 } // namespace cppshizoid::lambda
 
-#endif // !LAMBDA_COROS_HPP
+#endif // !LAMBDA_HPP
