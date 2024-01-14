@@ -10,7 +10,7 @@
 
 namespace cppshizoid::lambda_coros {
 
-constexpr std::string_view lambda_co_concatenate_impl(const std::string &a,
+constexpr std::string lambda_co_concatenate_impl(const std::string &a,
                                                  const std::string &b) {
   return a + b;
 }
