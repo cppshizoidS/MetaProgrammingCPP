@@ -23,7 +23,7 @@ constexpr void lambda_co_concatenate_impl(char *dest, const char *a,
 constexpr auto lambda_co_concatenate(const char *a, const char *b) {
   char result[256]; // Adjust the size as needed
   lambda_co_concatenate_impl(result, a, b);
-  return result;
+  return std::string(result);
 }
 
 constexpr auto lambda_co_concatenate_line() {
