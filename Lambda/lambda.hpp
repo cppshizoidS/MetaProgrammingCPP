@@ -8,7 +8,7 @@
 #include <type_traits>
 #include <utility>
 
-namespace cppshizoid::lambda_coros {
+namespace cppshizoid::lambda {
 
 constexpr std::string lambda_concatenate_impl(const std::string &a,
                                                  const std::string &b) {
