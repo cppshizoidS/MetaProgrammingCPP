@@ -1,40 +1,48 @@
-#include "lambda_utils.hpp"
+#include "lambda.hpp"
+
 #include <iostream>
 
 int main() {
-  int state_range = 0;
+  // Define a lambda coroutine to generate a range of numbers
+  auto number_range = cppshizoid::lambda_coroutines::range([]() -> int {
+    static int value = 0;
+    return value++;
+  }, 0, 5, 2);  // Generate a range from 0 to 5 with a stride of 2
 
-  auto lambda_range = [&state_range]() mutable { return state_range++; };
-
-  auto range =
-      cppshizoid::lambda::lambda_range(lambda_range, 0, 5, 2);
-
-  for (const auto &value : range) {
-    std::cout << value << " ";
+  // Iterate over the generated range using a lambda coroutine
+  for (auto value : number_range) {
+    std::cout << "Current value: " << value << '\n';
   }
 
-  std::cout << std::endl;
-
-  int state_while = 0;
-
-  auto lambda_while = [&state_while]() mutable -> std::optional<int> {
-    cppshizoid::lambda::lambda_status_check(
-        state_while); 
-    if (state_while < 5) {
-      return state_while++;
+  // Define a lambda coroutine to generate values while a condition is true
+  auto values_while_true = cppshizoid::lambda_coroutines::while_has_value([]() -> std::optional<int> {
+    static int value = 1;
+    if (value <= 5) {
+      return value++;
     } else {
-      return {}; // End of values
+      return std::nullopt;  // Signal the end of values
     }
-  };
+  });
 
-  auto range_while =
-      cppshizoid::lambda::while_has_value(lambda_while);
-
-  for (const auto &value : range_while) {
-    std::cout << value << " ";
+  // Iterate over the generated values while the condition is true
+  for (auto value : values_while_true) {
+    std::cout << "Current value: " << value << '\n';
   }
 
-  std::cout << std::endl;
+  // Example 1: Concatenating two lambdas that print messages
+    auto lambda1 = [] { std::cout << "Hello, "; };
+    auto lambda2 = [] { std::cout << "World!" << std::endl; };
+
+    auto concatenatedLambda1 = cppshizoid::lambda_coroutines::lambda_co_concatenate(lambda1, lambda2);
+    concatenatedLambda1();  // Output: Hello, World!
+
+    // Example 2: Concatenating two lambdas with parameters
+    auto lambda3 = [](int x) { std::cout << "Value: " << x << std::endl; };
+    auto lambda4 = [](double y) { std::cout << "Decimal: " << y << std::endl; };
+
+    auto concatenatedLambda2 = cppshizoid::lambda_coroutines::lambda_co_concatenate(lambda3, lambda4);
+    concatenatedLambda2(42);        // Output: Value: 42
+    concatenatedLambda2(3.14);      // Output: Decimal: 3.14
 
   return 0;
 }
