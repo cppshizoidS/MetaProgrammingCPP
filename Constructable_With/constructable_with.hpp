@@ -21,9 +21,11 @@ template <typename T, std::size_t n>
 concept aggregate_of = std::is_aggregate_v<T> && is_constructable_with<T, n> &&
                        !is_constructable_with<T, n + 1>;
 
+constexpr std::size_t maxAggregateMembers = 12;
+
 template <typename T>
 constexpr auto number_of_aggregate_members =
     []<std::size_t... indexes>(std::index_sequence<indexes...> i_s) {
       return ((aggregate_of<T, indexes> * indexes) + ... + 0);
-    }(std::make_index_sequence<12>{});
+    }(std::make_index_sequence<maxAggregateMembers>{}); 
 } // namespace lib
