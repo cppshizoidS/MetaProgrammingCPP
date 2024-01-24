@@ -1,46 +1,76 @@
 #ifndef ASIN_HPP
 #define ASIN_HPP
 
-#include <type_traits>
+#include <cmath>
+#include <limits>
 #include <ranges>
+#include <type_traits>
 
 template <typename T>
 concept FloatingPoint = std::is_floating_point_v<T>;
 
-template <FloatingPoint T>
-constexpr T power(T base, int exponent) {
-    T result = 1.0;
-    for (int i : std::views::iota(0, exponent)) {
-        result *= base;
-    }
-    return result;
+template <FloatingPoint T> constexpr T power(T base, int exponent) {
+  if (exponent == 0) {
+    return 1.0;
+  } else if (exponent % 2 == 0) {
+    T halfPower = power(base, exponent / 2);
+    return halfPower * halfPower;
+  } else {
+    return base * power(base, exponent - 1);
+  }
 }
 
 template <typename T>
-constexpr T power(T base, int exponent) requires std::is_integral_v<T> {
-    T result = 1;
-    for (int i : std::views::iota(0, exponent)) {
-        result *= base;
-    }
-    return result;
+constexpr T power(T base, int exponent)
+  requires std::is_integral_v<T>
+{
+  T result = 1;
+  for (int i : std::views::iota(0, exponent)) {
+    result *= base;
+  }
+  return result;
 }
 
-template <FloatingPoint T>
-constexpr T factorial(int n) {
-    T result = 1.0;
-    for (int i : std::views::iota(1, n + 1)) {
-        result *= i;
-    }
-    return result;
+template <FloatingPoint T> constexpr T factorial(int n) {
+  T result = 1.0;
+  for (int i : std::views::iota(1, n)) {
+    result *= i;
+  }
+  return result;
 }
 
-template <FloatingPoint T>
-constexpr T taylorSeriesASin(T x, int terms) {
-    T result = 0.0;
-    for (int n : std::views::iota(0, terms)) {
-        result += (power<T>(-1, n) / factorial<T>(2 * n + 1)) * power(x, 2 * n + 1);
+template <FloatingPoint T> constexpr T taylorSeriesASin(T x, int terms) {
+  T result = 0.0;
+  for (int n : std::views::iota(0, terms)) {
+    T term = (power<T>(-1, n) / factorial<T>(2 * n + 1)) * power(x, 2 * n + 1);
+    if (term < std::numeric_limits<T>::epsilon()) {
+      break;
     }
-    return result;
+    result += term;
+  }
+  return result;
+}
+
+template <FloatingPoint T> constexpr T chebyshevASin(T x) {
+  T xSquared = x * x;
+  T result = x * (1.0 + xSquared * (-0.166667 + xSquared * 0.075));
+  return result;
+}
+
+constexpr bool checkAsinRange() {
+  constexpr double x = 0.5;
+  constexpr int terms = 10;
+  double asinApprox = taylorSeriesASin(x, terms);
+  double asinDegrees = asinApprox * 180.0 / std::numbers::pi;
+
+  return (asinDegrees >= 28.299999999 && asinDegrees <= 30.000000001);
+}
+
+constexpr bool checkAsinChebRange() {
+  constexpr double x = 0.5;
+  constexpr double chebasinApprox = chebyshevASin(x);
+  double chebasinDegrees = std::asin(x) * 180.0 / std::numbers::pi;
+  return (chebasinDegrees >= 28.299999999 && chebasinDegrees <= 30.000000001);
 }
 
 #endif // ASIN_HPP
