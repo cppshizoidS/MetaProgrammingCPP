@@ -50,10 +50,13 @@ template <FloatingPoint T> constexpr T taylorSeriesASin(T x, int terms) {
   }
   return result;
 }
+constexpr double chebyshevCoeff0 = 1.0;
+constexpr double chebyshevCoeff1 = -0.166667;
+constexpr double chebyshevCoeff2 = 0.075;
 
 template <FloatingPoint T> constexpr T chebyshevASin(T x) {
   T xSquared = x * x;
-  T result = x * (1.0 + xSquared * (-0.166667 + xSquared * 0.075));
+  T result = x * (chebyshevCoeff0 + xSquared * (chebyshevCoeff1 + xSquared * chebyshevCoeff2));
   return result;
 }
 
