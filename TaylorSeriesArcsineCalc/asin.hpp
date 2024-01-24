@@ -42,14 +42,15 @@ template <FloatingPoint T> constexpr T factorial(int n) {
 template <FloatingPoint T> constexpr T taylorSeriesASin(T x, int terms) {
   T result = 0.0;
   for (int n : std::views::iota(0, terms)) {
-    T term = (power<T>(-1, n) / factorial<T>(2 * n + 1)) * power(x, 2 * n + 1);
-    if (term < std::numeric_limits<T>::epsilon()) {
-      break;
+      T term = factorial<T>(2 * n - 1) /factorial<T>(2 * n) * power(x, 2*n+1) / (2*n+1);
+      if (std::abs(term) < std::numeric_limits<T>::epsilon() * std::abs(result + term)) {
+          break;
+      }
+      result += term;
     }
-    result += term;
-  }
-  return result;
+    return result;
 }
+
 constexpr double chebyshevCoeff0 = 1.0;
 constexpr double chebyshevCoeff1 = -0.166667;
 constexpr double chebyshevCoeff2 = 0.075;
