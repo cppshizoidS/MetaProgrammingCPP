@@ -9,46 +9,24 @@
 template <typename T>
 concept FloatingPoint = std::is_floating_point_v<T>;
 
-template <FloatingPoint T> constexpr T power(T base, int exponent) {
-  if (exponent == 0) {
-    return 1.0;
-  } else if (exponent % 2 == 0) {
-    T halfPower = power(base, exponent / 2);
-    return halfPower * halfPower;
-  } else {
-    return base * power(base, exponent - 1);
-  }
+template <FloatingPoint T>
+constexpr T power(T base, int exponent) {
+    return (exponent == 0) ? 1.0 : ((exponent % 2 == 0) ? power(base, exponent / 2) * power(base, exponent / 2) : base * power(base, exponent - 1));
 }
 
 template <typename T>
-constexpr T power(T base, int exponent)
-  requires std::is_integral_v<T>
-{
-  T result = 1;
-  for (int i : std::views::iota(0, exponent)) {
-    result *= base;
-  }
-  return result;
+constexpr T factorial(int n) {
+    return (n == 0) ? 1.0 : n * factorial<T>(n - 1);
 }
 
-template <FloatingPoint T> constexpr T factorial(int n) {
-  T result = 1.0;
-  for (int i : std::views::iota(1, n)) {
-    result *= i;
-  }
-  return result;
+template <FloatingPoint T>
+constexpr T taylorSeriesASinImpl(T x, int n, int terms, T result) {
+    return (n == terms) ? result : taylorSeriesASinImpl(x, n + 1, terms, result + (factorial<T>(2 * n - 1) / factorial<T>(2 * n)) * power(x, 2 * n + 1) / (2 * n + 1));
 }
 
-template <FloatingPoint T> constexpr T taylorSeriesASin(T x, int terms) {
-  T result = 0.0;
-  for (int n : std::views::iota(0, terms)) {
-      T term = factorial<T>(2 * n - 1) /factorial<T>(2 * n) * power(x, 2*n+1) / (2*n+1);
-      if (std::abs(term) < std::numeric_limits<T>::epsilon() * std::abs(result + term)) {
-          break;
-      }
-      result += term;
-    }
-    return result;
+template <FloatingPoint T>
+constexpr T taylorSeriesASin(T x, int terms) {
+    return taylorSeriesASinImpl(x, 0, terms, 0.0);
 }
 
 constexpr double chebyshevCoeff0 = 1.0;
