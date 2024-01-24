@@ -66,14 +66,14 @@ constexpr bool checkAsinRange() {
   double asinApprox = taylorSeriesASin(x, terms);
   double asinDegrees = asinApprox * 180.0 / std::numbers::pi;
 
-  return (asinDegrees >= 28.299999999 && asinDegrees <= 30.000000001);
+  return (asinDegrees >= 28.599999999 && asinDegrees <= 30.000000001);
 }
 
 constexpr bool checkAsinChebRange() {
   constexpr double x = 0.5;
   constexpr double chebasinApprox = chebyshevASin(x);
   double chebasinDegrees = std::asin(x) * 180.0 / std::numbers::pi;
-  return (chebasinDegrees >= 28.299999999 && chebasinDegrees <= 30.000000001);
+  return (chebasinDegrees >= 28.599999999 && chebasinDegrees <= 30.000000001);
 }
 
 #endif // ASIN_HPP
