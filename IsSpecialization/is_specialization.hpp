@@ -1,5 +1,5 @@
-#ifndef IS_SPECIALIZATION_OF_H
-#define IS_SPECIALIZATION_OF_H
+#ifndef IS_SPECIALIZATION_OF_HPP
+#define IS_SPECIALIZATION_OF_HPP
 
 #include <type_traits>
 
@@ -10,4 +10,4 @@ struct is_specialization_of : std::false_type {};
 template <template <typename...> class Template, typename... Args>
 struct is_specialization_of<Template<Args...>, Template> : std::true_type {};
 
-#endif // IS_SPECIALIZATION_OF_H
+#endif // IS_SPECIALIZATION_OF_HPP
