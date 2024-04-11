@@ -1,5 +1,6 @@
 #include "fmap.hpp"
-#include <iostream>
+#include <print>
+#include <ranges>
 
 int square(int x) { return x * x; }
 
@@ -9,9 +10,8 @@ auto main() -> int {
   auto squared_numbers = fmap(square, numbers);
 
   for (const auto &n : squared_numbers) {
-    std::cout << n << " ";
+    std::print("{}", n);
   }
-  std::cout << std::endl;
-
+  std::println("{}", " ");
   return 0;
 }
