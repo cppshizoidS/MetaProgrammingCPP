@@ -37,7 +37,7 @@ template <typename R> struct step_sentinel {
 
   step_sentinel() = default;
 
-  constexpr step_sentinel(base end) : end_{end} {}
+  explicit constexpr step_sentinel(base end) : end_{end} {}
   constexpr bool is_at_end(step_iterator<R> it) const;
 
 private:
@@ -607,7 +607,6 @@ int main() {
 
     std::cout << '\n';
   }
-
 
   {
     std::vector<int> v{8, 5, 3, 2, 4, 7, 6, 1};
