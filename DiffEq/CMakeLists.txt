@@ -1,10 +1,8 @@
-cmake_minimum_required(VERSION 3.27)
+cmake_minimum_required(VERSION 3.28)
 project(DiffEquation)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include_directories(.)
-
-add_executable(DiffEquation
-        diff_methods.hpp
-        example.cpp)
+add_executable(DiffEquation diff_methods.hpp main.cpp)
