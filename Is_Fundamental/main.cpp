@@ -1,5 +1,6 @@
 #include "is_fundamental.hpp"
 #include <print>
+#include <string>
 int main() {
   // Examples
   std::print("int is fundamental: {}\n", is_fundamental<int>::value);
