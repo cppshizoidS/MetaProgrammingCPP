@@ -1,4 +1,4 @@
-#include <cstdio>
+#include <print>
 #include <type_traits>
 
 template <char c> using Cell = std::integral_constant<char, c>;
@@ -79,7 +79,7 @@ struct DisableLoop<Machine<PC, INLOOP, Cells...>>
     : Machine<PC, false, Cells...> {};
 
 template <size_t PC, bool INLOOP, typename... Cells>
-inline const auto ToStr(Machine<PC, INLOOP, Cells...>) {
+inline constexpr auto ToStr(Machine<PC, INLOOP, Cells...>) {
   constexpr static char str[] = {Cells::value...};
   return str;
 }
@@ -162,7 +162,7 @@ template <typename T, T... cs> constexpr auto operator""_brain_fuck() {
 };
 
 int main(int argc, char **argv) {
-  puts(R"(
+constexpr auto result = R"(
     >++++++++[<+++++++++>-]<.                 ; H
     >>++++++++++[<++++++++++>-]<+.            ; e
     >>+++++++++[<++++++++++++>-]<.            ; l
@@ -175,7 +175,8 @@ int main(int argc, char **argv) {
     >>+++++++++[<++++++++++++>-]<.            ; l
     >>++++++++++[<++++++++++>-]<.             ; d
     >>++++++[<++++++>-]<---.                  ; !
-    )"_brain_fuck);
+    )"_brain_fuck;
 
+  std::print("{}", result);
   return 0;
 }
