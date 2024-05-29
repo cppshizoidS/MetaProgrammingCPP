@@ -26,12 +26,7 @@ template <class T>
     auto&& [p1, p2] = std::forward<T>(obj);
     return std::tuple{p1, p2};
   } else {
-    struct foo {
-      int i{};
-      bool b{};
-    };
-    static_assert(std::tuple{42, true} == to_tuple(foo{.i = 42, .b = true}),
-                  "Not equal");
+   return std::tuple<>();
   }
 }
 /**
