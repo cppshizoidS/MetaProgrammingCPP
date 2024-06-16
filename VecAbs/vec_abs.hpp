@@ -4,22 +4,67 @@
 #include <array>
 #include <cstddef>
 #include <type_traits>
+#include <utility>
+#include <print>
 
-template <typename T, typename... Ts> constexpr bool all_convertible_to() {
-  return (std::is_convertible_v<T, Ts> && ...);
+template <typename T, typename... Ts>
+constexpr bool all_convertible_to() {
+    return (std::is_convertible_v<T, Ts> && ...);
 }
 
-template <typename T, size_t N> class vec_abs {
+template <typename T, size_t N>
+class vec_abs {
 public:
-  vec_abs();                   // construct from another vector
-  vec_abs(const vec_abs &vec); // construct from another vector
-  explicit vec_abs(const std::array<T, N> &arr); // construct from array
+    consteval vec_abs();
+    [[maybe_unused]] constexpr vec_abs(const vec_abs& vec);
+    [[maybe_unused]] constexpr vec_abs(vec_abs&& vec) noexcept;
+    [[maybe_unused]] explicit constexpr vec_abs(const std::array<T, N>& arr);
 
-  template <typename... Ts>
-    requires std::conjunction<std::is_convertible<Ts, T>...>::value &&
-             (sizeof...(Ts) == N)         
-  explicit vec_abs(const Ts &&...values); // construct from multiple arguments
+    template <typename... Ts>
+    requires std::conjunction_v<std::is_convertible<Ts, T>...> &&
+             (sizeof...(Ts) == N)
+    explicit consteval vec_abs(Ts&&... values);
 
-  std::array<T, N> data;
+    constexpr vec_abs& operator=(const vec_abs& other);
+    constexpr vec_abs& operator=(vec_abs&& other) noexcept;
+
+    std::array<T, N> data;
 };
-#endif
+
+template <typename T, size_t N>
+consteval vec_abs<T, N>::vec_abs() : data{} {}
+
+template <typename T, size_t N>
+[[maybe_unused]] constexpr vec_abs<T, N>::vec_abs(const vec_abs& vec) : data(vec.data) {}
+
+template <typename T, size_t N>
+[[maybe_unused]] constexpr vec_abs<T, N>::vec_abs(vec_abs&& vec) noexcept
+        : data(std::move(vec.data)) {}
+
+template <typename T, size_t N>
+[[maybe_unused]] constexpr vec_abs<T, N>::vec_abs(const std::array<T, N>& arr) : data(arr) {}
+
+template <typename T, size_t N>
+template <typename... Ts>
+requires std::conjunction_v<std::is_convertible<Ts, T>...> &&
+         (sizeof...(Ts) == N)
+consteval vec_abs<T, N>::vec_abs(Ts&&... values)
+        : data{std::forward<Ts>(values)...} {}
+
+template <typename T, size_t N>
+constexpr vec_abs<T, N>& vec_abs<T, N>::operator=(const vec_abs& other) {
+    if (this != &other) {
+        data = other.data;
+    }
+    return *this;
+}
+
+template <typename T, size_t N>
+constexpr vec_abs<T, N>& vec_abs<T, N>::operator=(vec_abs&& other) noexcept {
+    if (this != &other) {
+        data = std::move(other.data);
+    }
+    return *this;
+}
+
+#endif // VEC_ABS
