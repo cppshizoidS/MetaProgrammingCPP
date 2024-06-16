@@ -1,44 +1,33 @@
+#include <print>
+
 #include "vec_abs.hpp"
-#include <iostream>
 
 int main() {
-  // Создание вектора типа double размера 3
-  vec_abs<double, 3> vec1;
-
-  // Создание вектора из массива
+  vec::vec_abs<double, 3> vec1;
   std::array<double, 3> arr = {1.0, 2.0, 3.0};
-  vec_abs<double, 3> vec2(arr);
+  vec::vec_abs<double, 3> vec2(arr);
+  vec::vec_abs<double, 3> vec3(4.0, 5.0, 6.0);
 
-  // Создание вектора из нескольких аргументов
-  vec_abs<double, 3> vec3(4.0, 5.0, 6.0);
+  bool convertible = vec::all_convertible_to<int, double, float>();
 
-  // Проверка преобразуемости типов
-  bool convertible =
-      all_convertible_to<int, double,
-                         float>(); // Возвращает true, если все типы могут быть
-                                   // преобразованы в double
-
-  // Вывод результатов
-  std::cout << "Vector 1: ";
+  std::print("Vector 1: ");
   for (const auto &elem : vec1.data) {
-    std::cout << elem << " ";
+    std::print("{} ", elem);
   }
-  std::cout << std::endl;
+  std::print("\n");
 
-  std::cout << "Vector 2: ";
+  std::print("Vector 2: ");
   for (const auto &elem : vec2.data) {
-    std::cout << elem << " ";
+    std::print("{} ", elem);
   }
-  std::cout << std::endl;
+  std::print("\n");
 
-  std::cout << "Vector 3: ";
+  std::print("Vector 3: ");
   for (const auto &elem : vec3.data) {
-    std::cout << elem << " ";
+    std::print("{} ", elem);
   }
-  std::cout << std::endl;
+  std::print("\n");
 
-  std::cout << "Are all types convertible to double? " << std::boolalpha
-            << convertible << std::endl;
-
+  std::print("Are all types convertible to double? {}\n", convertible);
   return 0;
 }
