@@ -22,10 +22,8 @@ consteval auto operator==(const TypeList<Ts...>&, const TypeList<Ts...>&) -> boo
   return true;
 };
 
-
 template <typename... Ts>
 inline constexpr TypeList<Ts...> kTypeList;
-
 
 namespace impl {
 
@@ -37,9 +35,6 @@ struct Caster {};
 
 template <std::size_t... Is, typename... Ts>
 struct Caster<std::index_sequence<Is...>, Ts...> : IndexedType<Is, Ts>... {};
-
-
-
 } // namespace impl
 
 
@@ -96,7 +91,6 @@ template <typename T, std::size_t Max = 256>
 consteval auto GetArgsCount() {
   return GetArgsCountImpl<T, Max, 0, 0>();
 };
-
 
 
 template <typename T, std::size_t I = GetArgsCount<T>()>
@@ -186,8 +180,8 @@ struct InfoInjector {
   template <
     typename T,
     typename... Args,
-    std::size_t I = Counter<Current, TypeList<T, Args...>>(),     // Примечание: T, Args... должно быть 
-    auto = Injector<InfoKey<Current, I>{}, TypeList<T, Args...>{}>{}  //  уникально, иначе не запишет, чтобы записало см. clc
+    std::size_t I = Counter<Current, TypeList<T, Args...>>(),    
+    auto = Injector<InfoKey<Current, I>{}, TypeList<T, Args...>{}>{}  
   >
   static auto Method(Args...) -> void;
 };
@@ -215,7 +209,6 @@ consteval auto GetArgsFromMethod() {
     return TypeList<decltype(DropHead(Magic(Getter<InfoKey<T, Is>{}>{})))...>{};
   }(std::make_index_sequence<Counter<T>()>());
 };
-
 
 struct SomeImplA {
   template <typename T, typename... Args>
