@@ -2,8 +2,7 @@
 #include <array>
 #include <cassert>
 #include <cmath>
-#include <format>
-#include <iostream>
+#include <print>
 #include <numeric>
 #include <ranges>
 #include <sstream>
@@ -359,32 +358,32 @@ int main() {
   {
     using namespace n901;
 
-    std::cout << "abundant numbers: \n";
+    std::print("abundant numbers: \n");
 
     for (int i = 1; i <= 100; i++) {
       if (is_abundant(i))
-        std::cout << i << '\n';
+        std::print("{} ", i,'\n');
     }
   }
 
   {
     using namespace n901;
 
-    std::cout << "abundant numbers: \n";
+    std::print("\n abundant numbers: \n");
 
     for (int i : std::views::iota(1, 101) | std::views::filter(is_abundant)) {
-      std::cout << i << '\n';
+        std::print("{} ", i,'\n');
     }
   }
 
   {
     using namespace n901;
 
-    std::cout << "abundant numbers: \n";
+    std::print("\n abundant numbers: \n");
 
     for (int i : std::ranges::filter_view(std::ranges::iota_view(1, 101),
                                           is_abundant)) {
-      std::cout << i << '\n';
+       std::print("{} ", i,'\n');
     }
   }
 
@@ -393,7 +392,7 @@ int main() {
 
     std::vector<int> nums{10, 12, 14, 16, 18, 20};
     for (int i : nums | std::views::filter(is_abundant)) {
-      std::cout << i << '\n';
+       std::print("{} ", i,'\n');
     }
   }
 
@@ -404,7 +403,7 @@ int main() {
     for (auto i :
          std::views::iota(1, 101) | std::views::filter(is_abundant) |
              std::views::transform([](int const n) { return n / 2; })) {
-      std::cout << i << '\n';
+      std::print("{} ", i, '\n');
     }
   }
 
@@ -414,7 +413,7 @@ int main() {
 
     for (auto i : std::views::iota(1, 101) | std::views::filter(is_abundant) |
                       std::views::take(5)) {
-      std::cout << i << '\n';
+      std::print("{} ", i, '\n');
     }
   }
 
@@ -424,7 +423,7 @@ int main() {
 
     for (auto i : std::views::iota(1, 101) | std::views::reverse |
                       std::views::filter(is_abundant) | std::views::take(5)) {
-      std::cout << i << '\n';
+      std::print("{} ", i, '\n');
     }
   }
 
@@ -432,12 +431,12 @@ int main() {
   {
     using namespace n901;
 
-    std::cout << "trim N\n";
+    std::print("\n trim N \n");
 
     for (auto i : std::views::iota(1, 101) | std::views::filter(is_abundant) |
                       std::views::drop(5) | std::views::reverse |
                       std::views::drop(5) | std::views::reverse) {
-      std::cout << i << '\n';
+      std::print("{} ", i, '\n');
     }
   }
 
@@ -466,7 +465,7 @@ int main() {
   }
 
   {
-    std::cout << "square of even numbers (1):\n";
+    std::print("\n square of even numbers (1): \n");
 
     std::vector<int> v{1, 5, 3, 2, 8, 7, 6, 4};
 
@@ -488,11 +487,11 @@ int main() {
 
     // print each element
     std::for_each(temp.begin(), temp.end(),
-                  [](int const n) { std::cout << n << '\n'; });
+        [](int const n) { std::print("{} ", n,'\n'); });
   }
 
   {
-    std::cout << "square of even numbers (2):\n";
+    std::print("\nsquare of even numbers (2): \n");
 
     std::vector<int> v{1, 5, 3, 2, 8, 7, 6, 4};
 
@@ -502,11 +501,11 @@ int main() {
         std::ranges::views::drop(2) | std::ranges::views::reverse |
         std::ranges::views::transform([](int const n) { return n * n; });
 
-    std::ranges::for_each(r, [](int const n) { std::cout << n << '\n'; });
+    std::ranges::for_each(r, [](int const n) { std::print("{} ", n,'\n'); });
   }
 
   {
-    std::cout << "square of even numbers (3):\n";
+    std::print("\n square of even numbers (3): \n");
 
     namespace rv = std::ranges::views;
 
@@ -518,7 +517,7 @@ int main() {
             rv::drop(rv::filter(v, [](int const n) { return n % 2 == 0; }), 2)),
         [](int const n) { return n * n; });
 
-    std::ranges::for_each(r, [](int const n) { std::cout << n << '\n'; });
+    std::ranges::for_each(r, [](int const n) {  std::print("{} ", n, '\n'); });
   }
 
   {
@@ -547,7 +546,7 @@ int main() {
     for (auto i : v | rv::reverse | rv::filter([](int const n) {
                     return n % 2 == 1;
                   }) | rv::take(2)) {
-      std::cout << i << '\n';
+      std::print("\n{} ", i, '\n');
     }
   }
 
@@ -557,7 +556,7 @@ int main() {
     std::vector<int> v{1, 5, 3, 2, 4, 7, 16, 8};
     for (auto i : v | rv::take_while([](int const n) { return n < 10; }) |
                       rv::drop_while([](int const n) { return n % 2 == 1; })) {
-      std::cout << i << '\n';
+      std::print("{} ", i, '\n');
     }
   }
 
@@ -567,72 +566,71 @@ int main() {
     std::vector<std::tuple<int, double, std::string>> v = {
         {1, 1.1, "one"}, {2, 2.2, "two"}, {3, 3.3, "three"}};
 
-    std::cout << "keys:\n";
+    std::print("keys:\n");
     for (auto i : v | rv::keys)
-      std::cout << i << '\n';
+      std::print("{} ", i, '\n');
 
-    std::cout << "values:\n";
+    std::print("values:\n");
     for (auto i : v | rv::values)
-      std::cout << i << '\n';
+     std::print("{} ", i, '\n');
 
-    std::cout << "elements:\n";
+    std::print("elements:\n");
     for (auto i : v | rv::elements<2>)
-      std::cout << i << '\n';
+   std::print("{} ", i, '\n');
   }
 
   {
     namespace rv = std::ranges::views;
 
-    std::cout << "join:\n";
+    std::print("join:\n");
 
     std::vector<std::string> words{"a", "join", "example"};
     for (auto s : words | rv::join)
-      std::cout << s;
-
-    std::cout << '\n';
+      std::print("{} ", s, '\n');
   }
 
   {
     namespace rv = std::ranges::views;
 
-    std::cout << "join:\n";
+    std::print("join:\n");
 
     std::vector<std::vector<int>> v{{1, 2, 3}, {4}, {5, 6}};
 
     for (int const i : v | rv::join)
-      std::cout << i << ' '; // prints 1 2 3 4 5 6
+            std::print("{} ", i, '\n'); // prints 1 2 3 4 5 6
 
-    // for(int const i : v | rv::join_with(0))
-    //   std::cout << i << ' ';  // print 1 2 3 0 4 0 5 6
+     for(int const i : v | rv::join_with(0))
+    //   std::print(i << ' ';  // print 1 2 3 0 4 0 5 6
+        std::print("{} ", i, '\n');
+;
 
-    std::cout << '\n';
   }
 
   {
     std::vector<int> v{8, 5, 3, 2, 4, 7, 6, 1};
     auto r = std::views::iota(1, 10);
 
-    std::cout << "size(v)=" << std::ranges::size(v) << '\n';
-    std::cout << "size(r)=" << std::ranges::size(r) << '\n';
+    std::print("size(v)={}\n", std::ranges::size(v));
+    std::print("size(r)={}\n", std::ranges::size(r));
 
-    std::cout << "empty(v)=" << std::ranges::empty(v) << '\n';
-    std::cout << "empty(r)=" << std::ranges::empty(r) << '\n';
+    std::print("empty(v)={}\n", std::ranges::empty(v));
+    std::print("empty(r)={}\n", std::ranges::empty(r));
 
-    std::cout << "first(v)=" << *std::ranges::begin(v) << '\n';
-    std::cout << "first(r)=" << *std::ranges::begin(r) << '\n';
+    std::print("first(v)={}\n", *std::ranges::begin(v));
+    std::print("first(r)={}\n", *std::ranges::begin(r));
 
-    std::cout << "rbegin(v)=" << *std::ranges::rbegin(v) << '\n';
-    std::cout << "rbegin(r)=" << *std::ranges::rbegin(r) << '\n';
+    std::print("rbegin(v)={}\n", *std::ranges::rbegin(v));
+    std::print("rbegin(r)={}\n", *std::ranges::rbegin(r));
 
-    std::cout << "data(v)=" << *std::ranges::data(v) << '\n';
+    std::print("data(v)={}\n", *std::ranges::data(v));
   }
 
   {
     for (auto i : std::ranges::iota_view(1, 10))
-      std::cout << i << '\n';
+        std::print("{} ", i, '\n');
 
     for (auto i : std::views::iota(1, 10))
-      std::cout << i << '\n';
+        std::print("{} ", i, '\n');
   }
 
   {
@@ -651,10 +649,10 @@ int main() {
 
   {
     auto v1 = std::ranges::views::iota(1, 10);
-    std::ranges::for_each(v1, [](int const n) { std::cout << n << '\n'; });
+    std::ranges::for_each(v1, [](int const n) { std::print("{}", n , '\n'); });
 
     auto v2 = std::ranges::views::iota(1) | std::ranges::views::take(9);
-    std::ranges::for_each(v2, [](int const n) { std::cout << n << '\n'; });
+    std::ranges::for_each(v2, [](int const n) { std::print("{}", n , '\n'); });
   }
 
   {
@@ -667,7 +665,7 @@ int main() {
     }
 
     auto total = std::accumulate(prices.begin(), prices.end(), 0.0);
-    std::cout << std::format("total: {}\n", total);
+    std::print("\n total: {}\n", total);
   }
 
   {
@@ -678,7 +676,7 @@ int main() {
       prices.push_back(price);
     }
     auto total = std::accumulate(prices.begin(), prices.end(), 0.0);
-    std::cout << std::format("total: {}\n", total);
+    std::print("\n total: {}\n", total);
   }
 
   {
@@ -689,7 +687,7 @@ int main() {
         std::ranges::istream_view<double>(stream),
         [&prices](double const price) { prices.push_back(price); });
     auto total = std::accumulate(prices.begin(), prices.end(), 0.0);
-    std::cout << std::format("total: {}\n", total);
+    std::print("\n total: {}\n", total);
   }
 
   {
@@ -746,36 +744,36 @@ int main() {
   {
     using namespace n902;
 
-    std::cout << "step(1)\n";
+    std::print("step(1): \n");
     for (auto i : std::views::iota(1, 10) | n902::views::step(1))
-      std::cout << i << '\n';
+      std::print("{} ", i, '\n');
 
-    std::cout << "step(2)\n";
+    std::print("\nstep(2): \n");
     for (auto i : std::views::iota(1, 10) | n902::views::step(2))
-      std::cout << i << '\n';
+      std::print("{} ", i, '\n');
 
-    std::cout << "step(3)\n";
+    std::print("\nstep(3): \n");
     for (auto i : std::views::iota(1, 10) | n902::views::step(3))
-      std::cout << i << '\n';
+      std::print("{} ", i, '\n');
 
-    std::cout << "step(4)\n";
+    std::print("\nstep(4): \n");
     for (auto i : std::views::iota(1, 10) | n902::views::step(4))
-      std::cout << i << '\n';
+      std::print("{} ", i, '\n');
 
-    std::cout << "step(5)\n";
+    std::print("\nstep(5): \n");
     for (auto i : std::views::iota(1, 10) | n902::views::step(5))
-      std::cout << i << '\n';
+      std::print("{} ", i, '\n');
 
-    std::cout << "step(2) | take(3)\n";
+    std::print("\nstep(2) | take(3): \n");
     for (auto i :
          std::views::iota(1, 10) | n902::views::step(2) | std::views::take(3))
-      std::cout << i << '\n';
+      std::print("{} ", i, '\n');
 
-    std::cout << "step(2) | take(3)\n";
+    std::print("\nstep(2) | take(3): \n");
     auto r = n902::views::step(std::views::iota(1, 10), 2);
     auto t = std::ranges::take_view(r, 3);
     for (auto i : t)
-      std::cout << i << '\n';
+      std::print("{} ", i, '\n');
   }
 
   {
@@ -790,13 +788,13 @@ int main() {
   {
     using namespace n903;
 
-    std::cout << "replicate(2)\n";
+    std::print("\nreplicate(2)\n");
     for (auto i : std::views::iota(1, 5) | n903::views::replicate(2))
-      std::cout << i << '\n';
+      std::print("{} ", i, '\n');
 
-    std::cout << "replicate(2)\n";
+    std::print("\nreplicate(2)\n");
     for (auto i : std::views::iota(1, 5) | n903::views::replicate(2) |
                       std::views::take(5))
-      std::cout << i << '\n';
+      std::print("{} ", i, '\n');
   }
 }
